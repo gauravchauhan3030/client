@@ -1,17 +1,39 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import { Provider } from "react-redux";
+import { createStore, applyMiddleware } from "redux";
+import reduxThunk from "redux-thunk";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+import App from "./components/App";
+import Welcome from "./components/Welcome";
+import Signup from "./components/auth/Signup";
+import Feature from "./components/Feature";
+import Signout from "./components/auth/Signout";
+import Signin from "./components/auth/Signin";
+import reducers from "./reducers";
+
+const store = createStore(
+  reducers,
+  {
+    auth: {
+      authenticated: localStorage.getItem("token"),
+    },
+  },
+  applyMiddleware(reduxThunk)
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+ReactDOM.render(
+  <Provider store={store}>
+    <Router>
+      <App>
+        <Route path="/" exact component={Welcome} />
+        <Route path="/signup" component={Signup} />
+        <Route path="/feature" component={Feature} />
+        <Route path="/signout" component={Signout} />
+        <Route path="/signin" component={Signin} />
+      </App>
+    </Router>
+  </Provider>,
+  document.getElementById("root")
+);
